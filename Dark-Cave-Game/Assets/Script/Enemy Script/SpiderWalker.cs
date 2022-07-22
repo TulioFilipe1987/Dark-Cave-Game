@@ -18,7 +18,7 @@ public class SpiderWalker : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 5f;
 
-    private bool moveLeft;
+    public bool moveLeft;// lll
 
     private Vector3 tempPos;
     private Vector3 tempScale;
@@ -31,6 +31,13 @@ public class SpiderWalker : MonoBehaviour
 
     private float minWalkX, maxWalkX;
 
+    //isso vai limitar a dstancia de ida e volta
+    [SerializeField]
+    private bool walkWithGroundCheck;
+
+   
+
+
     private void Awake()
     {
         spriteRen = GetComponent<SpriteRenderer>();
@@ -39,18 +46,21 @@ public class SpiderWalker : MonoBehaviour
         moveLeft = Random.Range(0, 2) > 0 ? true : false;
 
         scaleXValue = transform.localScale.x; // ativar a escala
-                                              //
-        minWalkX = transform.position.x - maxWalkDistanceValue;
-        maxWalkX = transform.position.x + maxWalkDistanceValue;
+                                             
+        minWalkX = transform.position.x - maxWalkDistanceValue;// -10
+        maxWalkX = transform.position.x + maxWalkDistanceValue;// +10
 
 
     }
 
-    private void Update()
-    {
+    private void Update(){
 
-        //HandleWalkingWithGroundCheck();
-        //CheckForGround();
+        HandleWalkingWithGroundCheck();
+        CheckForGround();
+        HandleWalkingWithWalkingDistance();
+
+
+
     }
 
     void CheckForGround(){ // estudar raycast
@@ -65,20 +75,26 @@ public class SpiderWalker : MonoBehaviour
 
     void HandleWalkingWithGroundCheck(){
 
+        if (!walkWithGroundCheck)//useWalkDistance  True
+            return;  // ele so sse move aonde tiver chao ,
+                     // no caso esse chão é limitado de A ate B
+
         tempPos = transform.position;
-        tempScale = transform.localScale;// ultimo agora 1
+        tempScale = transform.localScale;// ultimo agora 1 Serve paramover o ponto escala
+ 
+       //spriteRen.flipX = moveLeft; // ta liagado?aqui era so munda o  flipx
 
-        //spriteRen.flipX = moveLeft; // ta liagdo?
-
-        if(moveLeft)
+        if (moveLeft)
         {
             tempPos.x -= moveSpeed * Time.deltaTime;
-            tempScale.x =-scaleXValue;// a escala
+            tempScale.x = -scaleXValue;// a escala "recebe um valor"  
+        
         }
         else//(moveRight)
         {
             tempPos.x += moveSpeed * Time.deltaTime;
-            tempScale.x = scaleXValue;
+            tempScale.x = scaleXValue;//"recebe um valor"
+             
         }
 
         transform.position = tempPos;
@@ -86,12 +102,14 @@ public class SpiderWalker : MonoBehaviour
 
     }
 
-    void HandleWalkingWithWalkDistance()
+    void HandleWalkingWithWalkingDistance()
     {
+        if (walkWithGroundCheck)
+            return;
 
         tempPos = transform.position;
 
-        if (moveLeft)
+        if(moveLeft)
         {
             tempPos.x -= moveSpeed * Time.deltaTime;
         }
@@ -99,7 +117,22 @@ public class SpiderWalker : MonoBehaviour
         {
             tempPos.x += moveSpeed * Time.deltaTime;
         }
+
+        transform.position = tempPos;
+
+
+        spriteRen.flipX = moveLeft;
+
+        if (tempPos.x < minWalkX)
+            moveLeft = false;// side right
+
+        if (tempPos.x > maxWalkX)
+            moveLeft = true; 
+          
+    
     }
 
+
+      
 
 }//class
