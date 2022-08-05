@@ -13,6 +13,10 @@ public class TagManager : MonoBehaviour{
 
     public static string PLAYER_TAG = "Player";
 
+    public static string ENEMY_TAG = "Enemy";
+    public static string GOAL_TAG = "Goal";
+
+
 
 
 }//class

@@ -16,9 +16,24 @@ public class GameplayController : MonoBehaviour{
     private float airValue, timeValue;
 
     [SerializeField]
-    private float airDeductValue = 1f;
+    private float airDeductValue = 3f; // 3 segundos ate a volta 
 
     private bool gameRunnig;
+
+
+    [SerializeField]
+    private Canvas gameOverCanvas;
+
+    [SerializeField]
+    private Text winText, loseText;
+
+    [SerializeField]
+    private float restartLvTime = 3f;
+
+    private GameObject player;
+
+
+    
 
     private void Awake(){
 
@@ -44,6 +59,8 @@ public class GameplayController : MonoBehaviour{
 
         gameRunnig = true;
 
+        player = GameObject.FindGameObjectWithTag(TagManager.PLAYER_TAG);
+
  }
 
     private void Update(){
@@ -63,7 +80,7 @@ public class GameplayController : MonoBehaviour{
         if (timeValue <= 0f)
         {
             gameRunnig = false;
-            //game over 
+            GameOver(false);
 
 
         }
@@ -77,8 +94,63 @@ public class GameplayController : MonoBehaviour{
         if(airValue <= 0f)
         {
             gameRunnig = false;
+            GameOver(false);
             //game over 
         }
+
+
+    }
+
+    public void IncreaseAir(float air)
+    {
+        airValue += air;
+
+        if (airValue > airMax)
+            airValue = airMax;
+
+    }
+
+    public void IncreaseTime(float time)
+    {
+        timeValue += time;
+
+        if (timeValue > timeMax)
+            timeValue = timeMax;
+    
+    }
+
+    
+
+    void RestartLevel()
+    {
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene
+            (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+
+    public void GameOver(bool win)
+    {
+
+        SoundController.instance.Play_GameOverSound();// gameover sound
+
+        Destroy(player);
+        gameOverCanvas.enabled = true;
+
+
+        gameRunnig = false;
+
+        if (win)
+            winText.gameObject.SetActive(true);
+        else
+            loseText.gameObject.SetActive(true);
+
+         Invoke("Restartleve", restartLvTime);
+    }
+
+    void Restartlevel(){
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene
+            (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
 
     }

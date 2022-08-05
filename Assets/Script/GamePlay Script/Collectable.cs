@@ -5,14 +5,33 @@ using UnityEngine;
 public class Collectable : MonoBehaviour
 {
     [SerializeField]
-    private bool timeCollcetable;
+    private bool timeCollectable;
 
     [SerializeField]
-    private float collectatableValue = 15f;
+    private float collectableValue = 15f;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+
+        if (collision.CompareTag(TagManager.PLAYER_TAG))
+        {
+
+            SoundController.instance.Play_CollectableSound();
+
+            if (timeCollectable)
+            {
+
+                GameplayController.instance.IncreaseTime(collectableValue);
+            }
+            else{
+
+                GameplayController.instance.IncreaseAir(collectableValue);
+
+            }
+
+            gameObject.SetActive(false);
+
+        }
     }
 
 

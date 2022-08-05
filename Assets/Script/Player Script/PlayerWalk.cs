@@ -124,6 +124,10 @@ public class PlayerWalk : MonoBehaviour
         {
             if(IsGrounded())
             {
+
+                SoundController.instance.Play_PlayerJumpSound();
+
+                
                 myBody.velocity = new Vector2(myBody.velocity.x, jumpForce);
 
             }
@@ -132,5 +136,28 @@ public class PlayerWalk : MonoBehaviour
         }
     
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.CompareTag(TagManager.ENEMY_TAG))
+        {
+
+            collision.gameObject.SetActive(false);// quando bater no objetivo
+            GameplayController.instance.GameOver(false);
+        }
+            
+
+
+        if (collision.CompareTag(TagManager.GOAL_TAG))// quando chaeggar no objetivo 
+            GameplayController.instance.GameOver(true);//era false erro?
+    }
+    
+    private void OnCollisionEnter2D(Collision2D collision){
+
+        if (collision.gameObject.CompareTag(TagManager.ENEMY_TAG))
+            GameplayController.instance.GameOver(false);
+    }
+
 
 }//class
